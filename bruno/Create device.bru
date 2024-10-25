@@ -1,0 +1,16 @@
+meta {
+  name: Create device
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:8880/device
+  body: formUrlEncoded
+  auth: none
+}
+
+body:form-urlencoded {
+  type: 30
+  state: 1
+}

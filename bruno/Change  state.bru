@@ -1,0 +1,15 @@
+meta {
+  name: Change  state
+  type: http
+  seq: 13
+}
+
+patch {
+  url: http://localhost:8880/device/0e42ed1a-a3f5-4976-9d4c-bfd7c79d91f4
+  body: formUrlEncoded
+  auth: none
+}
+
+body:form-urlencoded {
+  state: 0
+}

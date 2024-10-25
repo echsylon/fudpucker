@@ -1,0 +1,16 @@
+meta {
+  name: Add peer
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:8880/peer?id=64bf8246-e20a-5b21-9fb4-4b2d20305870&address=192.168.86.195:8881
+  body: formUrlEncoded
+  auth: none
+}
+
+params:query {
+  id: 64bf8246-e20a-5b21-9fb4-4b2d20305870
+  address: 192.168.86.195:8881
+}
