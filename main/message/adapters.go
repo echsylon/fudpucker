@@ -22,35 +22,38 @@ func NewReceiveMessageHandler(
 	return func(sender string, data []byte) (err error) {
 		reader := bytes.NewBuffer(data)
 		idLen := len(entity.ZeroId)
-		bytes := reader.Next(idLen)
 
+		bytes := reader.Next(idLen)
 		messageId, err := entity.NewBytesId(bytes)
 		if err != nil {
-			log.Error("Failed reading incomming message id")
+			log.Error("Failed reading incomming message")
 			return
 		}
 
 		typeValue, err := reader.ReadByte()
 		messageType := entity.MessageType(typeValue)
 		if err != nil {
-			log.Error("Failed reading incomming message type")
+			log.Error("Failed reading incomming message %s", messageId)
 			return
+		}
+
+		if isMessageInQuarantine(messageId) {
+			log.Notice("Already seen incomming message %s (type=%s), ignoring", messageId, messageType)
+			return nil
 		}
 
 		bytes = reader.Next(idLen)
 		senderId, err := entity.NewBytesId(bytes)
 		if err != nil {
-			log.Error("Failed reading incomming message sender id")
+			log.Error("Failed reading incomming message %s (type=%s)", messageId, messageType)
 			return
 		}
 
-		bytes = reader.Next(unit.MaxInt)
-		if isMessageInQuarantine(messageId) {
-			log.Information("Already seen incomming message %s (type=%s), ignoring", messageId, messageType)
-			return nil
-		}
+		log.Information("Successfully read message %s (type=%s)", messageId, messageType)
 
+		bytes = reader.Next(unit.MaxInt)
 		message := entity.NewMessage(messageId, senderId, messageType, bytes)
+
 		putMessageInQuarantine(messageId, senderId)
 
 		switch message.GetType() {
@@ -75,8 +78,6 @@ func NewReceiveMessageHandler(
 
 		if err != nil {
 			log.Error("Failed handling message %s (type=%s)", messageId, messageType)
-		} else {
-			log.Information("Successfully read message %s (type=%s)", messageId, messageType)
 		}
 
 		return err
