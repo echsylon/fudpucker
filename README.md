@@ -1,2 +1,2 @@
-# fudpucker
-A distributed state repository written in Go
+# Fudpucker
+This project is a test bench for exploring different aspects of a distributed state repository. The source code is implementing a peer client which knows how to send and receive packets over a transport layer. If a given packet can be acted on, the client will do so and propagate a change event, otherwise it will just relay the packet to some of it's known peers. The client is responsible not to spam peers with duplicates of any packet. Furthermore it is also required to be idempotent to received packets.
